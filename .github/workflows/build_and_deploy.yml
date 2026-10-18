@@ -46,6 +46,7 @@ jobs:
       - name: Build and Push ${{ matrix.service }}
         working-directory: ${{ matrix.service }}/${{ matrix.service }}
         run: |
+          chmod +x ./mvnw
           ./mvnw clean package -DskipTests
 
     # We built images
