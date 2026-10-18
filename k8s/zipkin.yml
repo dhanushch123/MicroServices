@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zipkin
-  annotations:
-    cloud.google.com/backend-config: '{"default":"zipkin-backend-config"}'
 spec:
   selector:
     matchLabels:
@@ -26,11 +24,12 @@ spec:
         ports:
         - containerPort: 9411
         readinessProbe:
-          tcpSocket:
+          httpGet:
+            path: /health
             port: 9411
-          initialDelaySeconds: 20
-          periodSeconds: 10
-          timeoutSeconds: 5
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 20
 
 ---
 
@@ -38,6 +37,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: zipkin
+  annotations:
+    cloud.google.com/backend-config: '{"default": "zipkin-backend-config"}'
 spec:
   selector:
     app: zipkin
@@ -54,7 +55,7 @@ spec:
   healthCheck:
     type: HTTP
     port: 9411
-    requestPath: /
+    requestPath: /health
     checkIntervalSec: 15
     timeoutSec: 5
     healthyThreshold: 1

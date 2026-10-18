@@ -30,7 +30,7 @@ public class OrderController {
     public String helloOrders(@RequestHeader(name = "X-User-Id",required = false) Long userId) {
         log.info("User Id : {}" , userId);
         log.info("Variable value from application properties: {}", variable);
-        return "Hello from Orders Service : " + variable;
+        return "Hello from Orders Service From GKE : " + variable;
     }
 
 //    @PostMapping("/create-order")
