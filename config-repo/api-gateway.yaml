@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: http://order-service:9020
+          predicates:
+            - Path=/orders/**
+        - id: inventory-service
+          uri: http://inventory-service:9010
+          predicates:
+            - Path=/inventory/**
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY:local-development-secret-key-change-before-deploy}

@@ -1,0 +1,20 @@
+server:
+  port: 9020
+  servlet:
+    context-path: /orders
+
+spring:
+  datasource:
+    url: jdbc:postgresql://order-db:5432/orderDB
+    username: ${POSTGRES_USER:user}
+    password: ${POSTGRES_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+services:
+  inventory-service:
+    url: http://inventory-service:9010
+
+variable:
+  name: Docker Compose

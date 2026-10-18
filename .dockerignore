@@ -1,0 +1,10 @@
+.git
+.idea
+**/target
+**/.mvn
+**/mvnw
+**/mvnw.cmd
+logs
+*.pdf
+*.html
+config-server.zip

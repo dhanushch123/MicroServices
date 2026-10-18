@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-server
+spec:
+  selector:
+    matchLabels:
+      app: config-server
+  template:
+    metadata:
+      labels:
+        app: config-server
+    spec:
+      containers:
+      - name: config-server
+        image: dhanushch3/ecommerce-config-server:latest
+        resources:
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: native
+          - name: EUREKA_CLIENT_ENABLED
+            value: "false"
+        ports:
+        - containerPort: 8888
+        volumeMounts:
+        - name: config-repo
+          mountPath: /config-repo
+          readOnly: true
+        readinessProbe:
+          tcpSocket:
+            port: 8888
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8888
+          initialDelaySeconds: 60
+          periodSeconds: 20
+          timeoutSeconds: 5
+      volumes:
+      - name: config-repo
+        configMap:
+          name: config-server-files
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-server
+spec:
+  selector:
+     app: config-server
+  ports:
+  - port: 8888
+    targetPort: 8888

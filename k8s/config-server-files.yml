@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-server-files
+data:
+  application.yaml: |
+    eureka:
+      client:
+        enabled: false
+    management:
+      tracing:
+        sampling:
+          probability: 1.0
+      zipkin:
+        tracing:
+          endpoint: http://zipkin:9411/api/v2/spans
+  order-service.yaml: |
+    server:
+      port: 9020
+      servlet:
+        context-path: /orders
+    spring:
+      datasource:
+        url: jdbc:postgresql://order-db-service:5432/orderDB
+        username: ${DB_USER:user}
+        password: ${DB_PASSWORD:password}
+      jpa:
+        hibernate:
+          ddl-auto: update
+    services:
+      inventory-service:
+        url: http://inventory-service:80
+    variable:
+      name: Kubernetes
+  inventory-service.yaml: |
+    server:
+      port: 9010
+      servlet:
+        context-path: /inventory
+    spring:
+      datasource:
+        url: jdbc:postgresql://inventory-db-service:5432/inventoryDB
+        username: ${DB_USER:user}
+        password: ${DB_PASSWORD:password}
+      jpa:
+        hibernate:
+          ddl-auto: update
+        defer-datasource-initialization: true
+      sql:
+        init:
+          mode: always
+    services:
+      order-service:
+        url: http://order-service:80
+  api-gateway.yaml: |
+    server:
+      port: 8080
+    spring:
+      cloud:
+        gateway:
+          routes:
+          - id: order-service
+            uri: http://order-service:80
+            predicates:
+            - Path=/orders/**
+          - id: inventory-service
+            uri: http://inventory-service:80
+            predicates:
+            - Path=/inventory/**
+    jwt:
+      secretKey: ${JWT_SECRET_KEY:local-development-secret-key-change-before-deploy}
