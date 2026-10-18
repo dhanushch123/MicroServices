@@ -8,7 +8,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: Kubernetes Project
+  GKE_CLUSTER: kubernetes-cluster
   GKE_ZONE: asia-south1
 
 jobs:
