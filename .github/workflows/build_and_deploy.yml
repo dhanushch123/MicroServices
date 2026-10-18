@@ -76,7 +76,7 @@ jobs:
 
       - name: Apply manifests and restart deployments
         run: |
-          kubectl apply -f k8/
+          kubectl apply -f k8s/
           kubectl rollout restart deployment/config-server
           kubectl rollout status deployment/config-server --timeout=300s
           kubectl rollout restart deployment/api-gateway deployment/inventory-service deployment/order-service
